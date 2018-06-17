@@ -14,9 +14,9 @@
         	function pushBarrage(barrage) {
                 var bstr;
                 switch(barrage.type) {
-                    case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="animation: ' + barrage.type + ' 15s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-delay: ' + (Math.random() * 3 + 0) + 's;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
-                    case 'top': bstr = '<div class="barrage b_' + barrage.type + '" style="z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
-                    case 'bottom': bstr = '<div class="barrage b_' + barrage.type + '" style="z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';animation: ' + barrage.type + ' 15s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-delay: ' + (Math.random() * 3 + 0) + 's;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'top': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'bottom': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                 }
     			var barrage = new DOMParser().parseFromString(bstr,'text/html').querySelector('div');
     			barrage.addEventListener('animationstart', function() {
@@ -77,7 +77,7 @@
     		font-family: sans-serif;
     		color: #FFF;
     		font-size: 36px;
-    		text-shadow: 0 0 16px #000;
+    		text-shadow: 0 0 16px rgba(0,0,0,0.5);
     		white-space: nowrap;
     	}
         .b_top {
@@ -101,7 +101,7 @@
         <div class="barrage" style="top: 0;right: 0;left: unset;opacity: 1;width: auto;">已加载弹幕数：<span id="bcnt">0</span>&nbsp</div>
         <script>
             init();
-            pushBarrage({message:'tooSimpleBarrage已启动。',type:'bullet'});
+            pushBarrage({message:'tooSimpleBarrage已启动。',type:'bullet',color:'#F00'});
         </script>
 	</body>
 </html>

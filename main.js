@@ -20,7 +20,8 @@ io.on('connection', function (socket) {
     socket.on('barrage', function(data) {
         socket.broadcast.emit('barrage',{
             message: data.message,
-            type: data.type
+            type: data.type,
+            color: data.color
         })
     });
 });

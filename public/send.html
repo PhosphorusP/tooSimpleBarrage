@@ -1,8 +1,10 @@
 <html>
 	<head>
+        <title>发送弹幕</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="../source/socket.io.slim.js"></script>
 		<script>
+            var type = 'bullet', color = '#FFF';
         	var socket = io.connect('/'); 
 			socket.on('connect', function () {
 	    		console.log('%cConnected to the server successfully.','color: #080');
@@ -10,20 +12,50 @@
             function snd() {
                 send({
                     message: document.getElementById('message').value,
-                    type: document.getElementById('type').value
+                    type: type,
+                    color: color
                 });
             }
     	    function send(barrage) {
     	        socket.emit('barrage', {
     	            message: barrage.message,
-                    type: barrage.type
+                    type: barrage.type,
+                    color: barrage.color
     	        });
     	    }
             function keydown(e) {
                 if(e.keyCode==13) document.getElementById('btn').click();
             }
+            function setType(newType) {
+                type = newType;
+                for(i=0;i<document.getElementsByClassName('type').length;i++) {
+                    document.getElementsByClassName('type')[i].setAttribute('class','type');
+                }
+                document.getElementById(newType).setAttribute('class','type rtype');
+            }
+            function setColor(newColorObject) {
+                var newColor = newColorObject.getAttribute('color');
+                color = newColor;
+                for(i=0;i<document.getElementsByClassName('color').length;i++) {
+                    document.getElementsByClassName('color')[i].setAttribute('class','color');
+                }
+                document.getElementById(newColor).setAttribute('class','color rcolor');
+            }
+            function init() {
+                for(i=0;i<document.getElementsByClassName('color').length;i++) {
+                    document.getElementsByClassName('color')[i].style.backgroundColor = document.getElementsByClassName('color')[i].getAttribute('color');
+                    document.getElementsByClassName('color')[i].setAttribute('onclick','setColor(this)');
+                    document.getElementsByClassName('color')[i].setAttribute('id',document.getElementsByClassName('color')[i].getAttribute('color'));
+                }
+            }
     	</script>
     	<style>
+            html {
+                cursor: default;
+            }
+            * {
+                transition-duration: 0.25s;
+            }
             .container {
                 position: fixed;
                 top: 50%;
@@ -40,7 +72,6 @@
                 border-radius: 4px 4px 0 0;
                 color: #222;
                 outline: none;
-                transition-duration: 0.25s;
             }
             input:hover, input:focus {
                 background: #DDD;
@@ -51,11 +82,11 @@
     			border: none;
                 width: 256px;
                 height: 32px;
+                font-size: 16px;
                 background: #007AFF;
                 border-radius: 0 0 4px 4px;
                 color: #FFF;
                 outline: none;
-                transition-duration: 0.25s;
     		}
             button:hover {
                 background: #006AFF;
@@ -66,17 +97,63 @@
                 height: 32px;
                 outline: none;
             }
+            .line {
+                width: 256px;
+                text-align: center;
+                margin-top: 4px;
+            }
+            .type {
+                cursor: default;
+                display: inline-block;
+                background: #EEE;
+                color: #007AFF;
+                margin: 4px;
+                padding-left: 4px;
+                padding-right: 4px;
+                border-radius: 2px;
+            }
+            .type:hover {
+                background: #DDD;
+            }
+            .rtype {
+                background: #007AFF!important;
+                color: #FFF;
+            }
+            .color {
+                display: inline-block;;
+                margin: 4px;
+                width: 16px;
+                height: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+                border-radius: 8px;
+            }
+            .rcolor {
+                box-shadow: 0 0 12px #000;
+            }
     	</style>
 	</head>
 	<body>
         <div class="container">
-		  <input type='text' id="message" value="233" onkeydown="keydown(event)" />
-		  <button id="btn" onclick="snd()">Send</button>
-          <select id="type">
-              <option value="bullet">滚动</option>
-              <option value="top">顶部</option>
-              <option value="bottom">底部</option>
-          </select>
+		  <input type='text' id="message" value="融合包覆着酥脆的杏仁果" onkeydown="keydown(event)" />
+		  <button id="btn" onclick="snd()">发送</button>
+          <div class="line">
+              <div id="bullet" class="type rtype" onclick="setType('bullet')">滚动</div>
+              <div id="top" class="type" onclick="setType('top')">顶部</div>
+              <div id="bottom" class="type" onclick="setType('bottom')">底部</div>
+          </div>
+          <div class="line">
+              <div class="color rcolor" color="#FFF"></div>
+              <div class="color" color="#F40"></div>
+              <div class="color" color="#2B4"></div>
+              <div class="color" color="#09F"></div>
+              <div class="color" color="#FD0"></div>
+              <div class="color" color="#F0B"></div>
+              <div class="color" color="#F60"></div>
+              <div class="color" color="#80F"></div>
+          </div>
         </div>
+        <script>
+            init();
+        </script>
 	</body>
 </html>
