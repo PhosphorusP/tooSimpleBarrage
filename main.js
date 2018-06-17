@@ -47,7 +47,7 @@ const opn = require('opn');
     tray.setContextMenu(trayMenu);
 
 
-    win = new BrowserWindow({width: 384, height: 256, frame: false, transparent: true, hasShadow: false})
+    win = new BrowserWindow({width: 384, height: 256, frame: false, transparent: true, hasShadow: false, skipTaskbar: true})
   
     win.loadFile(path.join(__dirname, '/sources/launch.html'));
     //win.setIgnoreMouseEvents(true);

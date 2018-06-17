@@ -17,6 +17,7 @@
                     case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';animation: ' + barrage.type + ' 8s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                     case 'top': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                     case 'bottom': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'boom': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + ';text-shadow: none;">' + barrage.message + '</div>';break;
                 }
     			var barrage = new DOMParser().parseFromString(bstr,'text/html').querySelector('div');
     			barrage.addEventListener('animationstart', function() {
@@ -71,6 +72,19 @@
                 opacity: 0;
             }
         }
+        @keyframes boom {
+            0% {
+                opacity: 0;
+                transform: translate(-50%,-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%,-50%) scale(3);
+            }
+        }
     	.barrage {
             font-family: 'Pingfang SC', Helvetica, 'Microsoft Yahei', '微软雅黑', sans-serif;
     		position: absolute;
@@ -94,11 +108,19 @@
             animation: disappear 5s linear;
             animation-fill-mode: both;
         }
+        .b_boom {
+            top: 50%;
+            left: {chwidth}px!important;
+            transform: translate(-50%,-50%);
+            animation: boom 1s ease-in;
+            animation-fill-mode: both;
+            -webkit-text-stroke: 0.5px #000;
+        }
     </style>
 	</head>
 	<body>
 		<div id="container"></div>
-        <div class="barrage" style="top: 0;right: 0;left: unset;opacity: 1;width: auto;">已加载弹幕数：<span id="bcnt">0</span>&nbsp</div>
+        <div class="barrage" style="top: 0;right: 0;left: unset;opacity: 0;width: auto;">已加载弹幕数：<span id="bcnt">0</span>&nbsp</div>
         <script>
             init();
             pushBarrage({message:'tooSimpleBarrage已启动。',type:'bullet',color:'#F00'});
