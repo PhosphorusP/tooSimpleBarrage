@@ -4,23 +4,40 @@
     	<script>
         	var socket = io.connect('/');
         	var styleBackup = '';
+            var cnt = 0, tcnt = 0;
         	function init() {
-        		if(styleBackup.length == 0) styleBackup = document.getElementById('preCSS').innerHTML;
+        		if(styleBackup.length < 2) styleBackup = document.getElementById('preCSS').innerHTML;
         		else document.getElementById('preCSS').innerHTML = styleBackup;
-        		document.getElementById('preCSS').innerHTML = document.getElementById('preCSS').innerHTML.replace(/cwidth/g,document.getElementById("container").offsetWidth);
+        		document.getElementById('preCSS').innerHTML = document.getElementById('preCSS').innerHTML.replace(/\{cwidth\}/g,document.getElementById("container").offsetWidth);
+                document.getElementById('preCSS').innerHTML = document.getElementById('preCSS').innerHTML.replace(/\{chwidth\}/g,Math.floor(document.getElementById("container").offsetWidth/2));
         	}
-        	function pushBarrage(str) {
-        		var bstr = '<div class="message" style="animation: message 15s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-delay: ' + (Math.random() * 3 + 0) + 's;">' + str + '</div>';
+        	function pushBarrage(barrage) {
+                var bstr;
+                switch(barrage.type) {
+                    case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="animation: ' + barrage.type + ' 15s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-delay: ' + (Math.random() * 3 + 0) + 's;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'top': bstr = '<div class="barrage b_' + barrage.type + '" style="z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'bottom': bstr = '<div class="barrage b_' + barrage.type + '" style="z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                }
     			var barrage = new DOMParser().parseFromString(bstr,'text/html').querySelector('div');
-    			barrage.addEventListener('animationend', function() {
-    				//this.parentNode.removeChild(this);
-    			});
+    			barrage.addEventListener('animationstart', function() {
+                    cnt++;tcnt++;
+                    refcnt();
+                });
+                barrage.addEventListener('animationend', function() {
+                    //this.parentNode.removeChild(this);
+                    cnt--;
+                    refcnt();
+                });
     			document.getElementById('container').appendChild(barrage);
+                refcnt();
         	}
+            function refcnt() {
+                document.getElementById('bcnt').innerHTML = cnt;
+            }
 			socket.on('connect', function () {
     			console.log('%cConnected to the server successfully.','color: #080');
     			socket.on('barrage', function(data) {
-    				pushBarrage(data.message);
+    				pushBarrage(data);
 				});
     		});
     </script>
@@ -33,36 +50,58 @@
         	height: 100%;
         	overflow: hidden;
         }
-        @keyframes message {
-        	0% {
-        		opacity: 1;
-        		transform: translateX(cwidthpx);
-        	}
-        	100% {
-        		opacity: 1;
-        		transform: translateX(-cwidthpx);
-        	}
+        @keyframes bullet {
+            0% {
+                opacity: 1;
+                transform: translateX({cwidth}px) translateX(64px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(-{cwidth}px) translateX(-100%);
+            }
         }
-    	.message {
+        @keyframes disappear {
+            0% {
+                opacity: 1;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+    	.barrage {
     		position: absolute;
-    		width: 100%;
-    		left: 0;
-    		top: 0;
     		font-weight: bold;
     		font-family: sans-serif;
     		color: #FFF;
     		font-size: 36px;
-    		text-shadow: 0 0 32px #000;
-    		opacity: 0;
+    		text-shadow: 0 0 16px #000;
     		white-space: nowrap;
     	}
+        .b_top {
+            top: 8px;
+            left: {chwidth}px!important;
+            transform: translateX(-50%);
+            animation: disappear 5s linear;
+            animation-fill-mode: both;
+        }
+        .b_bottom {
+            bottom: 8px;
+            left: {chwidth}px!important;
+            transform: translateX(-50%);
+            animation: disappear 5s linear;
+            animation-fill-mode: both;
+        }
     </style>
 	</head>
 	<body>
 		<div id="container"></div>
-		<script>
-			init();
-			for(i=1;i<=8;i++) pushBarrage('tooSimpleBarrage已启动。')
-		</script>
+        <div class="barrage" style="top: 0;right: 0;left: unset;opacity: 1;width: auto;">已加载弹幕数：<span id="bcnt">0</span>&nbsp</div>
+        <script>
+            init();
+            pushBarrage({message:'tooSimpleBarrage已启动。',type:'bullet'});
+        </script>
 	</body>
 </html>

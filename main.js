@@ -19,7 +19,8 @@ app_express.use(express.static('public'));
 io.on('connection', function (socket) {
     socket.on('barrage', function(data) {
         socket.broadcast.emit('barrage',{
-            message: data.message
+            message: data.message,
+            type: data.type
         })
     });
 });
