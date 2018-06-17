@@ -14,7 +14,7 @@
         	function pushBarrage(barrage) {
                 var bstr;
                 switch(barrage.type) {
-                    case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';animation: ' + barrage.type + ' 8s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-delay: ' + (Math.random() * 3 + 0) + 's;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
+                    case 'bullet': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';animation: ' + barrage.type + ' 8s linear;top:' + (Math.random() * (window.innerHeight - 64) * 1) + 'px;animation-fill-mode: both;z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                     case 'top': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                     case 'bottom': bstr = '<div class="barrage b_' + barrage.type + '" style="color: ' + barrage.color + ';z-index: ' + tcnt + '">' + barrage.message + '</div>';break;
                 }
@@ -24,7 +24,7 @@
                     refcnt();
                 });
                 barrage.addEventListener('animationend', function() {
-                    //this.parentNode.removeChild(this);
+                    this.parentNode.removeChild(this);
                     cnt--;
                     refcnt();
                 });

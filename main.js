@@ -30,18 +30,27 @@ io.on('connection', function (socket) {
 
 
 //init Electron
+const path = require('path');
 const electron = require('electron');
-const BrowserWindow = require('electron').BrowserWindow
-const app_electron = require('electron').app
+const {BrowserWindow, Tray, Menu, ipcMain} = require('electron');
+const app_electron = require('electron').app;
+const opn = require('opn');
   let win
+  let tray = null
   
-  function createWindow () {
-    var {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
-    win = new BrowserWindow({width: width, height: height, frame: false, transparent: true, titleBarStyle: 'default', type: 'desktop', hasShadow: false, alwaysOnTop: true})
+  function readyHandler () {
+    tray = new Tray(path.join(__dirname,'/sources/tray.png'));
+    const trayMenu = Menu.buildFromTemplate([
+      {label: '退出', click: ()=>{app_electron.quit();}, type: 'normal'}
+    ]);
+    tray.setToolTip('tooSimpleBarrage正在运行。');
+    tray.setContextMenu(trayMenu);
+
+
+    win = new BrowserWindow({width: 384, height: 256, frame: false, transparent: true, hasShadow: false})
   
-    win.loadURL('http://127.0.0.1:3000/server.html')
-    win.maximize();
-    win.setIgnoreMouseEvents(true);
+    win.loadFile(path.join(__dirname, '/sources/launch.html'));
+    //win.setIgnoreMouseEvents(true);
   
     //win.webContents.openDevTools()
   
@@ -50,20 +59,24 @@ const app_electron = require('electron').app
     })
   }
   
-  app_electron.on('ready', createWindow)
+  app_electron.on('ready', readyHandler)
   
   app_electron.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app_electron.quit()
-    }
+      app_electron.quit();
   })
   
   app_electron.on('activate', () => {
     if (win === null) {
-      createWindow()
+      readyHandler()
     }
   })
 
-//open browser
-const opn = require('opn');
-setTimeout(function(){opn('http://127.0.0.1:3000/send.html')},1000)
+ipcMain.on('launch', (event, arg) => {
+    win.setOpacity(0);
+    win.setIgnoreMouseEvents(true);
+    win.maximize();
+    win.setAlwaysOnTop(true, 'screen-saver', 4);
+    win.loadURL('http://127.0.0.1:3000/server.html');
+    setTimeout(()=>{win.setOpacity(1)},1000);
+    setTimeout(()=>{opn('http://127.0.0.1:3000/send.html')},1000);
+  })
