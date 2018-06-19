@@ -26,9 +26,6 @@ io.on('connection', function (socket) {
     });
 });
 
-
-
-
 //init Electron
 const path = require('path');
 const electron = require('electron');
@@ -45,15 +42,9 @@ const opn = require('opn');
     ]);
     tray.setToolTip('tooSimpleBarrage正在运行。');
     tray.setContextMenu(trayMenu);
-
-
     win = new BrowserWindow({width: 384, height: 256, frame: false, transparent: true, hasShadow: false, skipTaskbar: true})
-  
     win.loadFile(path.join(__dirname, '/sources/launch.html'));
-    //win.setIgnoreMouseEvents(true);
-  
     //win.webContents.openDevTools()
-  
     win.on('closed', () => {
       win = null
     })
