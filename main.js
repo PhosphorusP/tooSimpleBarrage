@@ -16,6 +16,7 @@ app_express.get('/source/socket.io.slim.js', function (req, res) {
 });
 
 app_express.use(express.static('public'));
+io.set('origins', '*:*');
 io.on('connection', function (socket) {
     socket.on('barrage', function(data) {
         socket.broadcast.emit('barrage',{
@@ -37,6 +38,7 @@ const opn = require('opn');
   
   function readyHandler () {
     tray = new Tray(path.join(__dirname,'/sources/tray.png'));
+    tray.setPressedImage(path.join(__dirname,'/sources/trayHighlight.png'));
     const trayMenu = Menu.buildFromTemplate([
       {label: '退出', click: ()=>{app_electron.quit();}, type: 'normal'}
     ]);
